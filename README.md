@@ -1,1 +1,31 @@
-A simple hello world express server. 
+# Petfinder
+
+API desarrollada, diseñada y orientada para APP de Petfinder
+
+## descripcion
+
+Este es un proyecto desarrollado en ExpressJS para manejar peticiones GET/POST a una base de datos en postgreeSQL.
+
+## Requisitos
+
+- Node
+- Visual Studio code
+- Tener manos
+
+## Instalacion
+
+Clonamos el repositorio :
+'git clone --branch dev *Repositorio*'
+
+Abrimos una terminal dentro del proyecto clonado accionamos el siguiente comando:
+'npm i'
+
+## Iniciar proyecto
+
+En una terminal escribimoa:
+
+'node index.js'
+
+Cuando aparezca esto en la terminal:
+"Servidor está corriendo en el puerto 3000"
+El proyecto estra funcionando correctamente
