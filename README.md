@@ -2,7 +2,7 @@
 
 API desarrollada, diseñada y orientada para APP de Petfinder
 
-## descripcion
+## Descripcion
 
 Este es un proyecto desarrollado en ExpressJS para manejar peticiones GET/POST a una base de datos en postgreeSQL.
 
