@@ -22,7 +22,7 @@ Abrimos una terminal dentro del proyecto clonado accionamos el siguiente comando
 
 ## Iniciar proyecto
 
-En una terminal escribimoa:
+En una terminal escribimos:
 
 'node index.js'
 
