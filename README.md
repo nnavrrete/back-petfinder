@@ -15,16 +15,21 @@ Este es un proyecto desarrollado en ExpressJS para manejar peticiones GET/POST a
 ## Instalacion
 
 Clonamos el repositorio :
-'git clone --branch dev *Repositorio*'
+```bash
+git clone --branch dev *Repositorio*
+```
 
 Abrimos una terminal dentro del proyecto clonado accionamos el siguiente comando:
-'npm i'
-
+```bash
+npm i
+```
 ## Iniciar proyecto
 
 En una terminal escribimos:
 
-'node index.js'
+```bash
+node index.js
+```
 
 Cuando aparezca esto en la terminal:
 "Servidor está corriendo en el puerto 3000"
