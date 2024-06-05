@@ -14,19 +14,19 @@ const pool = new Pool({
   host: process.env.HOST,
   database: process.env.DBNAME,
   password: process.env.PASSWORD,
-  port: process.env.DBPORT, // Usa una variable de entorno diferente para el puerto de la base de datos
+  port: process.env.DBPORT, 
 });
 
 app.use(express.json());
 
 app.post('/', async (req, res) => {
   try {
-    const { id_dueño, nombre, correo, telefono, direccion } = req.body;
-    if (!id_dueño || !nombre || !correo || !telefono || !direccion) {
+    const {  nombre, correo, telefono, direccion, id_redsocial } = req.body;
+    if (!id_redsocial  || !nombre || !correo || !telefono || !direccion) {
       return res.status(400).json({ message: 'Todos los campos son obligatorios' });
     }
-    const query = 'INSERT INTO dueño (id_dueño, nombre, correo, telefono, dirección) VALUES ($1, $2, $3, $4, $5)';
-    const values = [id_dueño, nombre, correo, telefono, direccion];
+    const query = 'INSERT INTO dueno ( nombre, correo, telefono, dirección, id_redsocial) VALUES ($1, $2, $3, $4, $5)';
+    const values = [nombre, correo, telefono, direccion, id_redsocial];
     const result = await pool.query(query, values);
     res.status(201).json({ message: 'Registro creado exitosamente', result });
   } catch (error) {
