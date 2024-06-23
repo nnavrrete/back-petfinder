@@ -4,10 +4,10 @@ const Routes = (app) => {
   // Ruta para crear un nuevo dueño
   app.post('/dueno', async (req, res) => {
     try {
-      const { nombre, correo, telefono, dirección, id_redsocial } = req.body;
+      const { nombre, correo, telefono, dirección} = req.body;
       console.log('Received data:', req.body); // Log received data
       
-      if (!id_redsocial || !nombre || !correo || !telefono || !dirección) {
+      if (!id_redsocial || !nombre || !correo || !telefono) {
         return res.status(400).json({ message: 'Todos los campos son obligatorios' });
       }
 
@@ -21,8 +21,8 @@ const Routes = (app) => {
       }
 
       // Insert new user if not exists
-      const insertQuery = 'INSERT INTO dueno (nombre, correo, telefono, dirección, id_redsocial) VALUES ($1, $2, $3, $4, $5)';
-      const insertValues = [nombre, correo, telefono, dirección, id_redsocial];
+      const insertQuery = 'INSERT INTO dueno (nombre, correo, telefono, dirección) VALUES ($1, $2, $3, $4)';
+      const insertValues = [nombre, correo, telefono, dirección];
       const result = await pool.query(insertQuery, insertValues);
 
       res.status(201).json({ message: 'Registro creado exitosamente', result });
@@ -33,7 +33,7 @@ const Routes = (app) => {
   });
   
   // Ruta para obtener los dueños por su id_redsocial
-  app.get('/:id_redsocial', async (req, res) => {
+  app.get('/dueno/', async (req, res) => {
     try {
       const { id_redsocial } = req.params;
       const query = 'SELECT * FROM dueno WHERE id_redsocial = $1';
@@ -47,6 +47,27 @@ const Routes = (app) => {
 
   app.get('/' , (req, res) => {
     res.send('Hola mundo');
+  });
+
+  app.put('/dueno/:id', async (req, res) => {
+    try {
+      const { id } = req.params;
+      const { nombre, correo, telefono, dirección} = req.body;
+      console.log('Received data:', req.body); // Log received data
+
+      if (!id_redsocial || !nombre || !correo || !telefono || !dirección) {
+        return res.status(400).json({ message: 'Todos los campos son obligatorios' });
+      }
+
+      const query = 'UPDATE dueno SET nombre = $1, correo = $2, telefono = $3, dirección = $4,  WHERE id = $6';
+      const values = [nombre, correo, telefono, dirección, id];
+      const result = await pool.query(query, values);
+
+      res.status(200).json({ message: 'Registro actualizado exitosamente', result });
+    } catch (error) {
+      console.error('Error occurred during query:', error); // Log detailed error
+      res.status(500).json({ message: 'Error interno del servidor' });
+    }
   });
 
 };
