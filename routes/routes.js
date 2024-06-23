@@ -4,25 +4,25 @@ const Routes = (app) => {
   // Ruta para crear un nuevo dueño
   app.post('/dueno', async (req, res) => {
     try {
-      const { nombre, correo, telefono, dirección} = req.body;
+      const { nombre, correo, telefono, direccion} = req.body;
       console.log('Received data:', req.body); // Log received data
       
-      if (!id_redsocial || !nombre || !correo || !telefono) {
+      if ( !nombre || !correo || !telefono || !direccion ) {
         return res.status(400).json({ message: 'Todos los campos son obligatorios' });
       }
 
-      // Check if the user already exists
+      
       const checkQuery = 'SELECT * FROM dueno WHERE correo = $1';
       const checkResult = await pool.query(checkQuery, [correo]);
 
       if (checkResult.rows.length > 0) {
-        // User already exists
+        
         return res.status(409).json({ message: 'El usuario ya existe' });
       }
 
-      // Insert new user if not exists
-      const insertQuery = 'INSERT INTO dueno (nombre, correo, telefono, dirección) VALUES ($1, $2, $3, $4)';
-      const insertValues = [nombre, correo, telefono, dirección];
+      
+      const insertQuery = 'INSERT INTO dueno (nombre, correo, telefono, direccion) VALUES ($1, $2, $3, $4)';
+      const insertValues = [nombre, correo, telefono, direccion];
       const result = await pool.query(insertQuery, insertValues);
 
       res.status(201).json({ message: 'Registro creado exitosamente', result });
@@ -55,11 +55,11 @@ const Routes = (app) => {
       const { nombre, correo, telefono, dirección} = req.body;
       console.log('Received data:', req.body); // Log received data
 
-      if (!id_redsocial || !nombre || !correo || !telefono || !dirección) {
+      if (!nombre || !correo || !telefono || !dirección) {
         return res.status(400).json({ message: 'Todos los campos son obligatorios' });
       }
 
-      const query = 'UPDATE dueno SET nombre = $1, correo = $2, telefono = $3, dirección = $4,  WHERE id = $6';
+      const query = 'UPDATE dueno SET nombre = $1, correo = $2, telefono = $3, direccion = $4,  WHERE id = $6';
       const values = [nombre, correo, telefono, dirección, id];
       const result = await pool.query(query, values);
 
