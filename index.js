@@ -1,7 +1,9 @@
 const express = require('express');
 const cors = require('cors');
-const {connectdb} = require('./db/db');
-const { Routes } = require('./routes/routes');
+const { connectdb } = require('./db/db');
+const duenoRoutes = require('./routes/dueno');
+const mascotaRoutes = require('./routes/mascota');
+const bodyParser = require('body-parser');
 
 const app = express();
 
@@ -9,7 +11,12 @@ app.use(cors());
 app.use(express.json());
 
 connectdb();
-Routes(app);
+
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+
+app.use(duenoRoutes);
+app.use(mascotaRoutes);
 
 
 app.listen(3000, () => {
