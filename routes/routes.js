@@ -35,17 +35,18 @@ const Routes = (app) => {
   // Ruta para obtener los dueños por su id_redsocial
   app.get('/dueno/', async (req, res) => {
     try {
-      const { id_redsocial } = req.params;
+      const { correo } = req.params;
       const query = 'SELECT * FROM dueno WHERE id_redsocial = $1';
-      const result = await pool.query(query, [id_redsocial]);
+      const result = await pool.query(query, [correo]);
       res.status(200).json(result.rows);
+      console.log('Received data:', res.body);
     } catch (error) {
       console.error(error);
       res.status(500).json({ message: 'Error interno del servidor' });
     }
   });
 
-  app.get('/' , (req, res) => {
+  app.get('/' , (res) => {
     res.send('Hola mundo');
   });
 
@@ -70,8 +71,46 @@ const Routes = (app) => {
     }
   });
 
+  app.post('/mascota', async (req, res) => {
+    try {
+      const { nombre, tipo, raza, edad, id_dueno } = req.body;
+      console.log('Received data:', req.body); // Log received data
+
+      if (!nombre || !tipo || !raza || !edad || !id_dueno) {
+        return res.status(400).json({ message: 'Todos los campos son obligatorios' });
+      }
+
+      const insertQuery = 'INSERT INTO mascota (nombre, tipo, raza, edad, id_dueno) VALUES ($1, $2, $3, $4, $5)';
+      const insertValues = [nombre, tipo, raza, edad, id_dueno];
+      const result = await pool.query(insertQuery, insertValues);
+
+      res.status(201).json({ message: 'Registro creado exitosamente', result });
+    } catch (error) {
+      console.error('Error occurred during query:', error); // Log detailed error
+      res.status(500).json({ message: 'Error interno del servidor' });
+    }
+  });
 };
 
+app.post('/mascota', async (req, res) => {
+  try {
+    const { nombre, tipo, raza, edad, id_dueno } = req.body;
+    console.log('Received data:', req.body); // Log received data
+
+    if (!nombre || !tipo || !raza || !edad || !id_dueno) {
+      return res.status(400).json({ message: 'Todos los campos son obligatorios' });
+    }
+
+    const insertQuery = 'INSERT INTO mascota (nombre, tipo, raza, edad, id_dueno) VALUES ($1, $2, $3, $4, $5)';
+    const insertValues = [nombre, tipo, raza, edad, id_dueno];
+    const result = await pool.query(insertQuery, insertValues);
+
+    res.status(201).json({ message: 'Registro creado exitosamente', result });
+  } catch (error) {
+    console.error('Error occurred during query:', error); // Log detailed error
+    res.status(500).json({ message: 'Error interno del servidor' });
+  }
+});
 
 
 module.exports = { Routes };
