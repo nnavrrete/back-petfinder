@@ -3,6 +3,7 @@ const cors = require('cors');
 const { connectdb } = require('./db/db');
 const duenoRoutes = require('./routes/dueno');
 const mascotaRoutes = require('./routes/mascota');
+const mascotaDuenoRoutes = require('./routes/duenoMascota');
 const bodyParser = require('body-parser');
 
 const app = express();
@@ -17,6 +18,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use(duenoRoutes);
 app.use(mascotaRoutes);
+
 
 
 app.listen(3000, () => {

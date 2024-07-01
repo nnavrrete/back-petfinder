@@ -49,10 +49,14 @@ router.get('/dueno/mascotas', async (req, res) => {
     try {
       const { correo } = req.query;
       const query = `
-        SELECT d.id AS dueno_id, d.nombre AS dueno_nombre, d.correo, d.telefono, d.direccion,
-               m.id_mascota AS mascota_id, m.nombre AS mascota_nombre, m.tipo, m.raza, m.edad
+        SELECT 
+          d.id AS dueno_id, d.nombre AS dueno_nombre, d.correo, d.telefono, d.direccion,
+          m.id_mascota AS mascota_id, m.nombre AS mascota_nombre, m.tipo, m.raza, m.edad,
+          v.id_vacuna, v.tipo_de_vacuna AS nombre_vacuna, mv.fecha_aplicacion
         FROM dueno d
         LEFT JOIN mascota m ON m.dueno_id = d.id
+        LEFT JOIN mascota_vacuna mv ON mv.id_mascota = m.id_mascota
+        LEFT JOIN vacuna v ON v.id_vacuna = mv.id_vacuna
         WHERE d.correo = $1
       `;
       const result = await pool.query(query, [correo]);
@@ -61,21 +65,38 @@ router.get('/dueno/mascotas', async (req, res) => {
         return res.status(404).json({ message: 'No se encontraron datos para el correo proporcionado' });
       }
   
-      // Formatear la respuesta
       const dueno = {
         id: result.rows[0].dueno_id,
         nombre: result.rows[0].dueno_nombre,
         correo: result.rows[0].correo,
         telefono: result.rows[0].telefono,
         direccion: result.rows[0].direccion,
-        mascotas: result.rows.map(row => ({
-          id: row.mascota_id,
-          nombre: row.mascota_nombre,
-          tipo: row.tipo,
-          raza: row.raza,
-          edad: row.edad
-        })).filter(mascota => mascota.id !== null) // Filtrar las mascotas nulas (en caso de que el dueño no tenga mascotas)
+        mascotas: []
       };
+  
+      const mascotasMap = {};
+  
+      result.rows.forEach(row => {
+        if (!mascotasMap[row.mascota_id]) {
+          mascotasMap[row.mascota_id] = {
+            id: row.mascota_id,
+            nombre: row.mascota_nombre,
+            tipo: row.tipo,
+            raza: row.raza,
+            edad: row.edad,
+            vacunas: []
+          };
+          dueno.mascotas.push(mascotasMap[row.mascota_id]);
+        }
+  
+        if (row.id_vacuna) {
+          mascotasMap[row.mascota_id].vacunas.push({
+            id: row.id_vacuna,
+            nombre: row.nombre_vacuna,
+            fecha_aplicacion: row.fecha_aplicacion
+          });
+        }
+      });
   
       res.status(200).json(dueno);
     } catch (error) {
