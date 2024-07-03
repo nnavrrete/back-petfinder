@@ -16,7 +16,7 @@ router.post('/dueno', async (req, res) => {
       return res.status(409).json({ message: 'El usuario ya existe' });
     }
 
-    const insertQuery = 'INSERT INTO dueno (nombre, correo, telefono, direccion) VALUES ($1, $2, $3, $4)';
+    const insertQuery = 'INSERT INTO dueno (nombre, correo, telefono, direccion, photoUrl) VALUES ($1, $2, $3, $4, $5)';
     const insertValues = [nombre, correo, telefono, direccion];
     const result = await pool.query(insertQuery, insertValues);
 
@@ -47,7 +47,7 @@ router.get('/dueno/mascotas', async (req, res) => {
       const { correo } = req.query;
       const query = `
         SELECT 
-          d.id AS dueno_id, d.nombre AS dueno_nombre, d.correo, d.telefono, d.direccion,
+          d.id AS dueno_id, d.nombre AS dueno_nombre, d.correo, d.telefono, d.direccion, d.photoUrl,
           m.id_mascota AS mascota_id, m.nombre AS mascota_nombre, m.tipo, m.raza, m.edad,
           v.id_vacuna, v.tipo_de_vacuna AS nombre_vacuna, mv.fecha_aplicacion
         FROM dueno d
