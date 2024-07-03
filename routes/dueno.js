@@ -8,9 +8,6 @@ router.post('/dueno', async (req, res) => {
     const { nombre, correo, telefono, direccion } = req.body;
     console.log('Received data:', req.body); // Log received data
 
-    if (!nombre || !correo || !telefono || !direccion) {
-      return res.status(400).json({ message: 'Todos los campos son obligatorios' });
-    }
 
     const checkQuery = 'SELECT * FROM dueno WHERE correo = $1';
     const checkResult = await pool.query(checkQuery, [correo]);
@@ -106,23 +103,22 @@ router.get('/dueno/mascotas', async (req, res) => {
   });
 
 // Ruta para actualizar un dueño por su id
-router.put('/dueno/:id', async (req, res) => {
+router.put('/dueno/:correo', async (req, res) => {
   try {
-    const { id } = req.params;
-    const { nombre, correo, telefono, direccion } = req.body;
-    console.log('Received data:', req.body); // Log received data
+    const { nombre, correo, telefono, direccion } = req.body; // Usa req.body para obtener los datos
+    console.log('Received data:', req.body); // Registra los datos recibidos
 
     if (!nombre || !correo || !telefono || !direccion) {
       return res.status(400).json({ message: 'Todos los campos son obligatorios' });
     }
 
-    const query = 'UPDATE dueno SET nombre = $1, correo = $2, telefono = $3, direccion = $4 WHERE id = $5';
-    const values = [nombre, correo, telefono, direccion, id];
+    const query = 'UPDATE dueno SET nombre = $1, correo = $2, telefono = $3, direccion = $4 WHERE correo = $5';
+    const values = [nombre, correo, telefono, direccion, req.params.correo];
     const result = await pool.query(query, values);
 
     res.status(200).json({ message: 'Registro actualizado exitosamente', result });
   } catch (error) {
-    console.error('Error occurred during query:', error); // Log detailed error
+    console.error('Error occurred during query:', error); // Registra el error detallado
     res.status(500).json({ message: 'Error interno del servidor' });
   }
 });
