@@ -133,7 +133,7 @@ router.put('/dueno/imagen/:correo', async (req, res) => { // Ruta para actualiza
       return res.status(400).json({ message: 'Todos los campos son obligatorios' });
     }
 
-    const query = 'UPDATE dueno SET "photoUrl" = $1 WHERE correo = $2';
+    const query = 'UPDATE dueno SET "photoUrl" = $1 WHERE correo = $2 ';
     const values = [photoUrl, correo];
     const result = await pool.query(query, values);
 
