@@ -4,6 +4,7 @@ const { connectdb } = require('./db/db');
 const duenoRoutes = require('./routes/dueno');
 const mascotaRoutes = require('./routes/mascota');
 const mascotaDuenoRoutes = require('./routes/duenoMascota');
+const bucket = require('./routes/bucket');
 const bodyParser = require('body-parser');
 
 const app = express();
@@ -18,8 +19,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use(duenoRoutes);
 app.use(mascotaRoutes);
-
-
+app.use(bucket);
 
 app.listen(3000, () => {
   console.log('Servidor corriendo en http://localhost:3000');
