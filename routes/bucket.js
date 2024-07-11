@@ -22,6 +22,7 @@ router.get('/image', async (req, res) => {
     const [url] = await storage.bucket(bucketName).file(filename).getSignedUrl(options);
 
     res.status(200).send(url);
+    console.log('Generated GET signed URL:', url);
   } catch (error) {
     console.error('Error getting signed URL', error);
     res.status(500).send('Error getting signed URL');
@@ -34,7 +35,8 @@ router.post('/image-public-url', async (req, res) => {
     const filename = req.body.filename;
     const publicUrl = `https://storage.googleapis.com/${bucketName}/${filename}`;
 
-    res.status(200).send(publicUrl);
+    res.status(200).json({ publicUrl: publicUrl });
+    console.log('Generated public URL:', publicUrl);
   } catch (error) {
     console.error('Error getting public URL', error);
     res.status(500).send('Error getting public URL');
@@ -42,3 +44,5 @@ router.post('/image-public-url', async (req, res) => {
 });
 
 module.exports = router;
+
+

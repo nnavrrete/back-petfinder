@@ -48,7 +48,7 @@ router.get('/dueno/mascotas', async (req, res) => {
     const query = `
       SELECT 
         d.id AS dueno_id, d.nombre AS dueno_nombre, d.correo, d.telefono, d.direccion, d.photourl,
-        m.id_mascota AS mascota_id, m.nombre AS mascota_nombre, m.tipo, m.raza, m.edad,
+        m.id_mascota AS mascota_id, m.nombre AS mascota_nombre, m.tipo, m.raza, m.edad, m.dueno_id, m.photourl, m.fechanacimiento, m.castrado,
         v.id_vacuna, v.nombre AS nombre_vacuna, v.fechaAplicacion
       FROM dueno d
       LEFT JOIN mascota m ON m.dueno_id = d.id
@@ -81,6 +81,10 @@ router.get('/dueno/mascotas', async (req, res) => {
           tipo: row.tipo || null,
           raza: row.raza || null,
           edad: row.edad || null,
+          dueno_id: row.dueno_id || null,
+          photourl: row.photourl || null,
+          fechanacimiento: row.fechanacimiento || null,
+          castrado: row.castrado || null,
           vacunas: []
         };
         dueno.mascotas.push(mascotasMap[row.mascota_id]);
