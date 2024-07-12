@@ -28,4 +28,27 @@ router.post('/mascota', async (req, res) => {
   }
 });
 
+router.delete('/mascota/:id', async (req, res) => {
+  const { id } = req.params;
+  const client = await pool.connect();
+  try {
+    await client.query('BEGIN');
+    
+    // Primero eliminar todas las referencias en la tabla vacuna
+    await client.query('DELETE FROM vacuna WHERE id_mascota = $1', [id]);
+    
+    // Luego eliminar la mascota
+    await client.query('DELETE FROM mascota WHERE id_mascota = $1', [id]);
+    
+    await client.query('COMMIT');
+    res.status(200).json({ message: 'Pet deleted' });
+  } catch (err) {
+    await client.query('ROLLBACK');
+    console.error(err);
+    res.status(500).json({ error: 'Error deleting pet' });
+  } finally {
+    client.release();
+  }
+});
+
 module.exports = router;
