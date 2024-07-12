@@ -49,7 +49,7 @@ router.get('/dueno/mascotas', async (req, res) => {
       SELECT 
         d.id, d.nombre AS dueno_nombre, d.correo, d.telefono, d.direccion, d.photourl,
         m.id_mascota AS mascota_id, m.nombre AS mascota_nombre, m.tipo, m.raza, m.edad, m.dueno_id, m.photourl, m.fechanacimiento, m.castrado,
-        v.id_vacuna, v.nombre AS nombre_vacuna, v.fechaAplicacion
+        v.id_vacuna, v.nombre AS nombre_vacuna, v.fechaaplicacion
       FROM dueno d
       LEFT JOIN mascota m ON m.dueno_id = d.id
       LEFT JOIN vacuna v ON v.id_mascota = m.id_mascota
