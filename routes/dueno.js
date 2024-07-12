@@ -16,7 +16,7 @@ router.post('/dueno', async (req, res) => {
       return res.status(409).json({ message: 'El usuario ya existe' });
     }
 
-    const insertQuery = 'INSERT INTO dueno (nombre, correo, telefono, direccion, photoUrl) VALUES ($1, $2, $3, $4, $5)';
+    const insertQuery = 'INSERT INTO dueno (nombre, correo, telefono, direccion, photourl) VALUES ($1, $2, $3, $4, $5)';
     const insertValues = [nombre, correo, telefono, direccion, photoUrl ];
     const result = await pool.query(insertQuery, insertValues);
 
@@ -47,7 +47,7 @@ router.get('/dueno/mascotas', async (req, res) => {
     const { correo } = req.query;
     const query = `
       SELECT 
-        d.id AS dueno_id, d.nombre AS dueno_nombre, d.correo, d.telefono, d.direccion, d.photourl,
+        d.id, d.nombre AS dueno_nombre, d.correo, d.telefono, d.direccion, d.photourl,
         m.id_mascota AS mascota_id, m.nombre AS mascota_nombre, m.tipo, m.raza, m.edad, m.dueno_id, m.photourl, m.fechanacimiento, m.castrado,
         v.id_vacuna, v.nombre AS nombre_vacuna, v.fechaAplicacion
       FROM dueno d
@@ -62,12 +62,12 @@ router.get('/dueno/mascotas', async (req, res) => {
     }
 
     const dueno = {
-      id: result.rows[0].dueno_id,
+      id: result.rows[0].id,
       nombre: result.rows[0].dueno_nombre,
       correo: result.rows[0].correo,
       telefono: result.rows[0].telefono,
       direccion: result.rows[0].direccion,
-      photourl: result.rows[0].photourl,
+      photourl: result.rows[0].photourl || '', 
       mascotas: []
     };
 
@@ -77,14 +77,14 @@ router.get('/dueno/mascotas', async (req, res) => {
       if (!mascotasMap[row.mascota_id]) {
         mascotasMap[row.mascota_id] = {
           id: row.mascota_id,
-          nombre: row.mascota_nombre || null,
-          tipo: row.tipo || null,
-          raza: row.raza || null,
-          edad: row.edad || null,
-          dueno_id: row.dueno_id || null,
-          photourl: row.photourl || null,
-          fechanacimiento: row.fechanacimiento || null,
-          castrado: row.castrado || null,
+          nombre: row.mascota_nombre,
+          tipo: row.tipo ,
+          raza: row.raza ,
+          edad: row.edad ,
+          dueno_id: row.dueno_id, 
+          photourl: row.photourl ,
+          fechanacimiento: row.fechanacimiento, 
+          castrado: row.castrado ,
           vacunas: []
         };
         dueno.mascotas.push(mascotasMap[row.mascota_id]);
@@ -133,15 +133,15 @@ router.put('/dueno/:correo', async (req, res) => {
 
 router.put('/dueno/imagen/:correo', async (req, res) => { // Ruta para actualizar la imagen de un dueño
   try {
-    const { correo, photoUrl } = req.body; // Usa req.body para obtener los datos
+    const { correo, photourl } = req.body; // Usa req.body para obtener los datos
     console.log('Received data:', req.body); // Registra los datos recibidos
 
-    if (!correo || !photoUrl) {
+    if (!correo || !photourl) {
       return res.status(400).json({ message: 'Todos los campos son obligatorios' });
     }
 
     const query = 'UPDATE dueno SET photourl = $1 WHERE correo = $2 ';
-    const values = [photoUrl, correo];
+    const values = [photourl, correo];
     const result = await pool.query(query, values);
 
     res.status(200).json({ message: 'Registro actualizado exitosamente', result });
@@ -151,4 +151,22 @@ router.put('/dueno/imagen/:correo', async (req, res) => { // Ruta para actualiza
   }
 });
 
+router.get('/dueno/macotas/:id_mascota', async (req, res) => {
+
+  try{
+    const { id_mascota } = req.params;
+    const query = 'SELECT * FROM mascota WHERE id_mascota = $1';
+    
+    const result = await pool.query(query, [id_mascota]);
+    res.status(200).json(result.rows);
+
+    console.log('Received data:', result.rows);
+  }catch(error){
+    console.error('Error occurred during query:', error);
+    res.status(500).json({ message: 'Error interno del servidor' });
+  }
+});
+
 module.exports = router;
+
+
