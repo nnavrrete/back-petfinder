@@ -23,6 +23,6 @@ app.use(duenoRoutes);
 app.use(mascotaRoutes);
 app.use(bucket);
 
-app.listen(port, () => {
+app.listen(3000, () => {
   console.log('Servidor corriendo en http://localhost:3000');
 });
