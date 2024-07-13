@@ -131,25 +131,7 @@ router.put('/dueno/:correo', async (req, res) => {
   }
 });
 
-router.put('/dueno/imagen/:correo', async (req, res) => { // Ruta para actualizar la imagen de un dueño
-  try {
-    const { correo, photourl } = req.body; // Usa req.body para obtener los datos
-    console.log('Received data:', req.body); // Registra los datos recibidos
 
-    if (!correo || !photourl) {
-      return res.status(400).json({ message: 'Todos los campos son obligatorios' });
-    }
-
-    const query = 'UPDATE dueno SET photourl = $1 WHERE correo = $2 ';
-    const values = [photourl, correo];
-    const result = await pool.query(query, values);
-
-    res.status(200).json({ message: 'Registro actualizado exitosamente', result });
-  } catch (error) {
-    console.error('Error occurred during query:', error); // Registra el error detallado
-    res.status(500).json({ message: 'Error interno del servidor' });
-  }
-});
 
 router.get('/dueno/macotas/:id_mascota', async (req, res) => {
 

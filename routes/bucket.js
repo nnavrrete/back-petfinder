@@ -20,7 +20,6 @@ router.get('/image', async (req, res) => {
     };
 
     const [url] = await storage.bucket(bucketName).file(filename).getSignedUrl(options);
-
     res.status(200).send(url);
     console.log('Generated GET signed URL:', url);
   } catch (error) {
@@ -29,12 +28,10 @@ router.get('/image', async (req, res) => {
   }
 });
 
-// Nuevo endpoint para obtener la URL pública
 router.post('/image-public-url', async (req, res) => {
   try {
     const filename = req.body.filename;
     const publicUrl = `https://storage.googleapis.com/${bucketName}/${filename}`;
-
     res.status(200).json({ publicUrl: publicUrl });
     console.log('Generated public URL:', publicUrl);
   } catch (error) {
@@ -43,6 +40,24 @@ router.post('/image-public-url', async (req, res) => {
   }
 });
 
+router.put('/dueno/imagen/:correo', async (req, res) => {
+  try {
+    const { correo, photourl } = req.body;
+    console.log('Received data:', req.body);
+
+    if (!correo || !photourl) {
+      return res.status(400).json({ message: 'Todos los campos son obligatorios' });
+    }
+
+    const query = 'UPDATE dueno SET photourl = $1 WHERE correo = $2';
+    const values = [photourl, correo];
+    const result = await pool.query(query, values);
+
+    res.status(200).json({ message: 'Registro actualizado exitosamente', result });
+  } catch (error) {
+    console.error('Error occurred during query:', error);
+    res.status(500).json({ message: 'Error interno del servidor' });
+  }
+});
+
 module.exports = router;
-
-
