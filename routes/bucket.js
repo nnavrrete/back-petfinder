@@ -1,6 +1,7 @@
 const { Storage } = require('@google-cloud/storage');
 const express = require('express');
 const router = express.Router();
+const { pool } = require('../db/db');
 
 const storage = new Storage({
   projectId: 'petfinder-62461',

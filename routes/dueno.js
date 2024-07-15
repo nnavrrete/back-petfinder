@@ -94,7 +94,7 @@ router.get('/dueno/mascotas', async (req, res) => {
         mascotasMap[row.mascota_id].vacunas.push({
           id: row.id_vacuna,
           nombre: row.nombre_vacuna || null,
-          fecha_aplicacion: row.fechaAplicacion || null
+          fechaaplicacion: row.fechaaplicacion || null
         });
       }
     });
