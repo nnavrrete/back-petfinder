@@ -5,7 +5,7 @@ const { pool } = require('../db/db');
 // Ruta para crear un nuevo dueño
 router.post('/dueno', async (req, res) => {
   try {
-    const { nombre, correo, telefono, direccion, photoUrl } = req.body;
+    const { nombre, correo, telefono, direccion, photourl } = req.body;
     console.log('Received data:', req.body); // Log received data
 
 
@@ -17,7 +17,7 @@ router.post('/dueno', async (req, res) => {
     }
 
     const insertQuery = 'INSERT INTO dueno (nombre, correo, telefono, direccion, photourl) VALUES ($1, $2, $3, $4, $5)';
-    const insertValues = [nombre, correo, telefono, direccion, photoUrl ];
+    const insertValues = [nombre, correo, telefono, direccion, photourl ];
     const result = await pool.query(insertQuery, insertValues);
 
     res.status(201).json({ message: 'Registro creado exitosamente', result });
@@ -28,27 +28,13 @@ router.post('/dueno', async (req, res) => {
 });
 
 // Ruta para obtener los dueños por su correo
-router.get('/dueno', async (req, res) => {
-  try {
-    const { correo } = req.query;
-    const query = 'SELECT * FROM dueno WHERE correo = $1';
-    const result = await pool.query(query, [correo]);
-    res.status(200).json(result.rows);
-    console.log('Received data:', result.rows);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Error interno del servidor' });
-  }
-});
-
-// Ruta para obtener las mascotas de un dueño por su correo
 router.get('/dueno/mascotas', async (req, res) => {
   try {
     const { correo } = req.query;
     const query = `
       SELECT 
-        d.id, d.nombre AS dueno_nombre, d.correo, d.telefono, d.direccion, d.photourl,
-        m.id_mascota AS mascota_id, m.nombre AS mascota_nombre, m.tipo, m.raza, m.edad, m.dueno_id, m.photourl, m.fechanacimiento, m.castrado,
+        d.id, d.nombre AS dueno_nombre, d.correo, d.telefono, d.direccion, d.photourl AS dueno_photourl,
+        m.id_mascota AS mascota_id, m.nombre AS mascota_nombre, m.tipo, m.raza, m.edad, m.dueno_id, m.photourl AS mascota_photourl, m.fechanacimiento, m.castrado,
         v.id_vacuna, v.nombre AS nombre_vacuna, v.fechaaplicacion
       FROM dueno d
       LEFT JOIN mascota m ON m.dueno_id = d.id
@@ -67,7 +53,7 @@ router.get('/dueno/mascotas', async (req, res) => {
       correo: result.rows[0].correo,
       telefono: result.rows[0].telefono,
       direccion: result.rows[0].direccion,
-      photourl: result.rows[0].photourl || '', 
+      photourl: result.rows[0].dueno_photourl, 
       mascotas: []
     };
 
@@ -78,13 +64,13 @@ router.get('/dueno/mascotas', async (req, res) => {
         mascotasMap[row.mascota_id] = {
           id: row.mascota_id,
           nombre: row.mascota_nombre,
-          tipo: row.tipo ,
-          raza: row.raza ,
-          edad: row.edad ,
-          dueno_id: row.dueno_id, 
-          photourl: row.photourl ,
-          fechanacimiento: row.fechanacimiento, 
-          castrado: row.castrado ,
+          tipo: row.tipo,
+          raza: row.raza,
+          edad: row.edad,
+          dueno_id: row.dueno_id,
+          photourl: row.mascota_photourl,
+          fechanacimiento: row.fechanacimiento,
+          castrado: row.castrado,
           vacunas: []
         };
         dueno.mascotas.push(mascotasMap[row.mascota_id]);
@@ -106,8 +92,6 @@ router.get('/dueno/mascotas', async (req, res) => {
     res.status(500).json({ message: 'Error interno del servidor' });
   }
 });
-
-
 
 
 // Ruta para actualizar un dueño por su id
