@@ -51,7 +51,7 @@ router.delete('/mascota/:id', async (req, res) => {
   }
 });
 
-router.put ('/mascota/:id', async (req, res) => {
+router.put('/mascota/:id', async (req, res) => {
   const { id } = req.params;
   const { nombre, tipo, raza, edad, dueno_id, photoUrl, FechaNacimiento, castrado, vacunas } = req.body;
   const client = await pool.connect();
@@ -81,6 +81,40 @@ router.put ('/mascota/:id', async (req, res) => {
     res.status(500).json({ error: 'Error updating pet' });
   } finally {
     client.release();
+  }
+});
+
+router.get('/mascota/dueno/:id', async (req, res) => {
+  const mascotaId = req.params.id;
+  try {
+    const mascotaQuery = `
+      SELECT * FROM mascota
+      WHERE id_mascota = $1
+    `;
+    const mascotaResult = await pool.query(mascotaQuery, [mascotaId]);
+
+    if (mascotaResult.rows.length === 0) {
+      return res.status(404).json({ error: 'Mascota no encontrada' });
+    }
+
+    const mascota = mascotaResult.rows[0];
+
+    const duenoQuery = `
+      SELECT * FROM dueno
+      WHERE id = $1
+    `;
+    const duenoResult = await pool.query(duenoQuery, [mascota.dueno_id]);
+
+    if (duenoResult.rows.length === 0) {
+      return res.status(404).json({ error: 'Dueño no encontrado' });
+    }
+
+    const dueno = duenoResult.rows[0];
+    console.log(mascota, dueno);
+    res.json({ mascota, dueno });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Error interno del servidor' });
   }
 });
 
